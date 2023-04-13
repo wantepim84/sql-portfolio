@@ -64,18 +64,32 @@ SELECT pizza_id, Count(pizza_id) as Total_amount_ordered
 FROM customer_orders
 group by pizza_id 
 ;
+
 How many Vegetarian and Meatlovers were ordered by each customer?
 SELECT customer_id, pizza_id,count(pizza_id) as total
 FROM customer_orders
 group by customer_id, pizza_id
 ;
+
 What was the maximum number of pizzas delivered in a single order?
 select order_id, max(total)
 from (select order_id, count(pizza_id) as total 
 from customer_orders
 group by order_id)
 ;
+
 For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+select customer_id, 
+sum(case
+  when (exclusions is null or exclusions > 0) or (extras is null or extras > 0) then 1
+        else 0
+        end )as AtleastOneChange,
+sum(case 
+  when (exclusions is not null or exclusions < 0) and (extras is not null or extras < 0) then 1
+        else 0
+        end ) as NoChange
+from customer_orders
+group by customer_id;
 How many pizzas were delivered that had both exclusions and extras?
 What was the total volume of pizzas ordered for each hour of the day?
 What was the volume of orders for each day of the week?
