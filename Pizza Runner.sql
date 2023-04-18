@@ -90,6 +90,24 @@ sum(case
         end ) as NoChange
 from customer_orders
 group by customer_id;
+
 How many pizzas were delivered that had both exclusions and extras?
+SELECT COUNT(DISTINCT customer_id) AS exclusion_and_extras_pizzas
+from (select *
+from customer_orders
+inner join runner_orders
+on customer_orders.order_id=runner_orders.order_id)
+where (cancellation is null) and (exclusions is not null and exclusions<0) and (extras is not null and extras<0)
+;
+
 What was the total volume of pizzas ordered for each hour of the day?
+SELECT datepart(order_time) AS hour_of_day, 
+COUNT(order_id) AS pizza_count
+FROM customer_orders
+GROUP BY datepart(order_time);
+
 What was the volume of orders for each day of the week?
+select dayname(order_time) as Days, count(order_id) as TotalPizzasOrdered
+from customer_orders
+group by Days
+order by TotalPizzasOrdered desc;
